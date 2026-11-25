@@ -1,0 +1,190 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rebuild the Base</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Fredoka:wght@400;500;600&display=swap">
+<style>
+/* Layout: two panels — the question on the left, the friends' base growing one block row per right answer on the right. Single daytime-sky look by design. */
+:root{
+  --sky:#7EC8F2; --sky-2:#BFE6FA; --night:#1A2B3C; --panel:#14202D; --panel-line:#2E4458;
+  --grass:#6CC24A; --dirt:#8A5A34; --stone:#8B8E95; --wood:#B5874E; --roof:#6B3E22; --glass:#A9E9F5; --door:#5A3A1E; --gold:#FFD447; --flag:#B57BFF;
+  --ink:#F4F1E8; --ink-soft:#BFD0DD; --bad:#FF7A6B;
+  --display:'Pixelify Sans', 'Courier New', monospace;
+  --body:'Fredoka', 'Trebuchet MS', Arial, sans-serif;
+  color-scheme:light;
+}
+html,body{min-height:100%}
+body{background:linear-gradient(var(--sky),var(--sky-2));background-color:var(--sky);color:var(--ink);font-family:var(--body);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 32px;box-sizing:border-box}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:1;margin:0;color:#fff;text-shadow:4px 4px 0 var(--night)}
+.count{font-family:var(--display);font-size:24px;background:var(--panel);border:3px solid var(--panel-line);padding:8px 14px;border-radius:6px}
+.count b{color:var(--gold)}
+.game{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--panel);border:4px solid var(--panel-line);border-radius:8px;padding:clamp(16px,3vw,30px);display:flex;flex-direction:column;gap:16px;min-width:0}
+.kind{font-family:var(--display);font-size:20px;letter-spacing:2px;color:var(--gold);margin:0}
+.q{font-size:clamp(24px,3.6vw,34px);font-weight:600;line-height:1.3;margin:0}
+.q em{font-style:normal;color:var(--gold)}
+.answers{display:flex;flex-direction:column;gap:12px}
+.ans{font-family:var(--body);font-weight:600;font-size:clamp(22px,3.2vw,28px);text-align:left;color:#20160C;background:#F7F1DE;border:0;border-radius:6px;padding:16px 20px;cursor:pointer;box-shadow:0 5px 0 #B9AE8C;transition:transform .1s}
+.ans:hover{transform:translateY(-2px)}
+.ans:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+.ans.right{background:var(--grass);color:#10230A;box-shadow:0 5px 0 #3E7D27}
+.ans.wrong{background:#5A3A3A;color:#F4D6D2;box-shadow:0 5px 0 #3A2424;animation:shake .35s ease;cursor:default}
+.fb{min-height:36px;font-size:clamp(20px,2.8vw,24px);font-weight:600;margin:0}
+.fb.good{color:var(--grass)} .fb.bad{color:var(--bad)}
+button.btn{font-family:var(--display);font-weight:700;font-size:26px;color:#10230A;background:var(--grass);border:0;border-radius:4px;padding:14px 28px;cursor:pointer;box-shadow:0 6px 0 #3E7D27;align-self:flex-start}
+button.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #3E7D27}
+button.btn:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+.scene{background:linear-gradient(var(--sky-2),#E6F5FD);border:4px solid var(--panel-line);border-radius:8px;padding:18px 18px 0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.scene p{margin:0;color:var(--night);font-weight:600;font-size:20px;text-align:center}
+.base{display:grid;grid-template-columns:repeat(12,1fr);width:100%;max-width:440px;margin:0 auto;aspect-ratio:12/11}
+.cell{aspect-ratio:1;opacity:0;transform:translateY(-40px)}
+.cell.on{opacity:1;transform:none;transition:opacity .25s, transform .35s cubic-bezier(.3,1.6,.5,1)}
+.cell.e{visibility:hidden}
+.s{background:linear-gradient(#ffffff22 0 15%,transparent 15% 85%,#00000022 85%),var(--stone);box-shadow:inset 0 0 0 1px #00000033}
+.w{background:linear-gradient(transparent 0 46%,#00000026 46% 54%,transparent 54%),var(--wood);box-shadow:inset 0 0 0 1px #00000033}
+.r{background:linear-gradient(135deg,#ffffff1a 0 30%,transparent 30%),var(--roof);box-shadow:inset 0 0 0 1px #00000040}
+.n{background:linear-gradient(135deg,#ffffffaa 0 18%,transparent 18% 40%,#ffffff66 40% 48%,transparent 48%),var(--glass);box-shadow:inset 0 0 0 2px #6FB7C6}
+.d{background:linear-gradient(90deg,transparent 0 70%,var(--gold) 70% 80%,transparent 80%),var(--door);box-shadow:inset 0 0 0 1px #00000040}
+.f{background:var(--flag);box-shadow:inset 0 0 0 1px #00000033}
+.t{background:linear-gradient(transparent 0 30%,#7A5230 30%) 50% 0/30% 100% no-repeat,radial-gradient(circle at 50% 22%,var(--gold) 0 18%,#FF9B3D 19% 28%,transparent 29%)}
+.g{background:linear-gradient(var(--grass) 0 35%,var(--dirt) 35%);box-shadow:inset 0 0 0 1px #00000022;opacity:1;transform:none}
+.big{font-family:var(--display);font-size:clamp(40px,7vw,64px);color:var(--gold);margin:0;line-height:1.05;text-shadow:4px 4px 0 #000}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media (max-width:760px){.game{grid-template-columns:1fr}.scene{order:-1}.base{max-width:300px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>REBUILD THE BASE</h1>
+    <div class="count" aria-live="polite">Blocks: <b id="built">0</b> / 10</div>
+  </header>
+  <div class="game">
+    <main class="panel" id="panel"></main>
+    <aside class="scene" aria-label="The Mega Friendship Base">
+      <p id="sceneText">The creeper broke the base! Answer questions to rebuild it.</p>
+      <div class="base" id="base"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+// Base drawn top row first; layer index = which correct answer reveals it (1–10), ground is 0.
+const ART = [
+  ["....ff......",10],
+  [".....rr.....",9],
+  ["....rnnr....",8],
+  ["...rnnnnr...",7],
+  ["..rrrrrrrr..",6],
+  [".sssssssssst",5],
+  [".swnnwwnnws.",4],
+  [".swwwddwwws.",3],
+  ["tswnnddnnws.",2],
+  [".ssssssssss.",1],
+  ["gggggggggggg",0]
+];
+const QS = [
+  {k:"NAMING WORDS", q:"Which word is a <em>noun</em> (naming word)?", a:["torch","run","happy"], c:0, why:"A torch is a thing, so it is a naming word."},
+  {k:"CAPITAL LETTERS", q:"Which name is written the right way?", a:["grace","Grace","gRACE"], c:1, why:"A name starts with a Capital letter: Grace."},
+  {k:"NEW WORDS", q:"What does <em>rebuild</em> mean?", a:["to build again","to run away","to go to sleep"], c:0, why:"Rebuild means to build something again after it breaks."},
+  {k:"THE STORY", q:"Who drew a smart plan on a map?", a:["Evan","Tobi","Grace"], c:2, why:"Clever Grace drew the plan."},
+  {k:"DESCRIBING WORDS", q:"Which word tells us what the wall is like?<br>Tobi built a <em>___</em> wall.", a:["tall","Tobi","wall"], c:0, why:"Tall is a describing word."},
+  {k:"THE STORY", q:"What did Tobi put all around the base?", a:["cakes","torches","flowers"], c:1, why:"Tobi put torches around, because light keeps mobs away."},
+  {k:"CAPITAL LETTERS", q:"Fill the gap:<br><em>___</em> made new blocks at the crafting table.", a:["evan","Evan"], c:1, why:"Evan is a name, so it needs a Capital E."},
+  {k:"NEW WORDS", q:"Friends who work together are a…", a:["mob","torch","team"], c:2, why:"A team is friends who work together."},
+  {k:"ORDER WORDS", q:"Which word fits the last part of the story?<br><em>___</em>, Candace added a glass roof.", a:["First","Finally"], c:1, why:"Finally tells us it happened at the end."},
+  {k:"FEELINGS", q:"The new base was bigger and stronger. How did the friends feel?", a:["proud","sleepy","angry"], c:0, why:"They felt proud because they did something good."}
+];
+const panel = document.getElementById('panel');
+const base = document.getElementById('base');
+const builtEl = document.getElementById('built');
+const sceneText = document.getElementById('sceneText');
+let qi = 0, built = 0, tries = 0;
+
+ART.forEach(([row, layer]) => {
+  [...row].forEach(ch => {
+    const c = document.createElement('div');
+    c.className = 'cell ' + (ch === '.' ? 'e' : ch);
+    c.dataset.layer = layer;
+    base.appendChild(c);
+  });
+});
+
+let ac;
+function beep(f1,f2,dur){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type='square'; o.frequency.setValueAtTime(f1,ac.currentTime); o.frequency.linearRampToValueAtTime(f2,ac.currentTime+dur);
+    g.gain.setValueAtTime(.06,ac.currentTime); g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+dur);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+
+function showLayer(n){
+  base.querySelectorAll(`.cell[data-layer="${n}"]`).forEach((c,i) => setTimeout(() => c.classList.add('on'), i*40));
+}
+function resetBase(){ base.querySelectorAll('.cell').forEach(c => { if(c.dataset.layer !== '0') c.classList.remove('on'); }); }
+
+function start(){
+  panel.innerHTML = `
+    <p class="kind">MEGA FRIENDSHIP BASE</p>
+    <p class="q">Oh no! The creeper went BOOM and broke the base.</p>
+    <p class="fb" style="color:var(--ink-soft)">Answer 10 questions. Every right answer puts a new row of blocks on the base. Can you build it all, up to the flag?</p>
+    <button class="btn" id="go">START BUILDING</button>`;
+  document.getElementById('go').onclick = () => { qi=0; built=0; tries=0; builtEl.textContent=0; resetBase(); ask(); };
+}
+
+function ask(){
+  const Q = QS[qi];
+  panel.innerHTML = `
+    <p class="kind">QUESTION ${qi+1} · ${Q.k}</p>
+    <p class="q">${Q.q}</p>
+    <div class="answers" id="ans"></div>
+    <p class="fb" id="fb" aria-live="polite"></p>
+    <button class="btn" id="next" hidden>NEXT ➜</button>`;
+  const box = document.getElementById('ans');
+  Q.a.forEach((t,i) => {
+    const b = document.createElement('button'); b.type='button'; b.className='ans'; b.textContent=t;
+    b.onclick = () => pick(b,i);
+    box.appendChild(b);
+  });
+  sceneText.textContent = built === 0 ? 'The creeper broke the base! Answer questions to rebuild it.' : `Keep going! ${10-built} rows to build.`;
+}
+
+function pick(b,i){
+  const Q = QS[qi], fb = document.getElementById('fb');
+  if(b.classList.contains('wrong') || document.querySelector('.ans.right')) return;
+  if(i === Q.c){
+    b.classList.add('right');
+    built++; builtEl.textContent = built; showLayer(built);
+    beep(523,1046,.18);
+    fb.className='fb good'; fb.textContent = 'Yes! ' + Q.why;
+    const nx = document.getElementById('next');
+    nx.hidden = false; nx.textContent = qi === QS.length-1 ? 'SEE MY BASE ➜' : 'NEXT ➜'; nx.focus();
+    nx.onclick = () => { qi++; qi < QS.length ? ask() : finish(); };
+  } else {
+    tries++;
+    b.classList.add('wrong'); beep(220,140,.2);
+    fb.className='fb bad'; fb.textContent = 'Not this one. Try again!';
+  }
+}
+
+function finish(){
+  sceneText.textContent = 'The Mega Friendship Base is ready!';
+  panel.innerHTML = `
+    <p class="big">YOU REBUILT THE BASE!</p>
+    <p class="q">Tyler, Evan, Grace, Tobi and Candace say <em>thank you</em>! You are a great team player.</p>
+    <p class="fb good">${tries === 0 ? 'Perfect! Every answer right the first time.' : 'You never gave up, just like Tyler!'}</p>
+    <button class="btn" id="again">BUILD AGAIN</button>`;
+  beep(523,1046,.45);
+  document.getElementById('again').onclick = start;
+}
+showLayer(0);
+start();
+</script>
+
+</body></html>

@@ -1,0 +1,11 @@
+# Younimatiq
+
+> Live online 1:1 and small-group classes for K–12 kids: Coding, AI, Robotics, Math, English, Science, Minecraft, and more.
+
+- Site: https://younimatiq.com/
+- About: https://younimatiq.com/about
+- Courses: https://younimatiq.com/courses
+- Free trial: https://younimatiq.com/book-free-session
+- FAQ: https://younimatiq.com/faq
+- Contact: support@younimatiq.com
+- Full guidance: https://younimatiq.com/llms-full.txt

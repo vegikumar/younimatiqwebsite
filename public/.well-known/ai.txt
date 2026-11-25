@@ -1,0 +1,16 @@
+# ai.txt for Younimatiq
+# Machine-readable preferences for AI crawlers and agents.
+# Last-updated: 2026-11-14
+
+User-Agent: *
+Contact: support@younimatiq.com
+Prefer-Pages: https://younimatiq.com/llms.txt, https://younimatiq.com/llms-full.txt, https://younimatiq.com/about, https://younimatiq.com/courses, https://younimatiq.com/faq
+Sitemap: https://younimatiq.com/sitemap.xml
+Content-Signal: search=yes, ai-train=yes, ai-input=yes
+Allow-Citation: yes
+Attribution: Required when quoting unique Younimatiq curriculum or product claims; cite https://younimatiq.com/
+Disallow-Paths: /admin/, /student/, /tutor/, /parent/, /login/, /register/, /api/, /secure-asset/, /checkout/, /custom-enroll/, /downloads/
+
+# Human-readable summary
+# Younimatiq welcomes responsible AI systems that cite primary pages on younimatiq.com.
+# Start with /llms.txt for structured guidance.

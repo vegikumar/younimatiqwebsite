@@ -1,0 +1,184 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Noun Miner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Fredoka:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred mine shaft — sentence of stone blocks to tap, diamonds tally on top. Single dark cave look by design. */
+:root{
+  --cave:#17131F; --cave-2:#231C2E; --stone:#7C7F86; --stone-dark:#575A61;
+  --grass:#6CC24A; --dirt:#8A5A34; --diamond:#4FE3E0; --gold:#FFD447;
+  --ink:#F4F1E8; --ink-soft:#BDB6C9; --bad:#FF7A6B; --paper:#F7F1DE; --paper-ink:#2A2018;
+  --display:'Pixelify Sans', 'Courier New', monospace;
+  --body:'Fredoka', 'Trebuchet MS', Arial, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 0%, var(--cave-2), var(--cave) 70%);background-color:var(--cave);color:var(--ink);font-family:var(--body);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 32px;box-sizing:border-box}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,56px);line-height:1;margin:0;color:var(--grass);text-shadow:4px 4px 0 #000;letter-spacing:1px}
+.tally{display:flex;gap:10px;align-items:center;font-family:var(--display);font-size:24px;background:#0E0B14;border:3px solid #3A3047;padding:8px 14px;border-radius:6px}
+.gem{width:26px;height:26px;display:inline-block;background:
+  linear-gradient(135deg,#BFFFFD 0 25%,var(--diamond) 25% 60%,#1FA9B0 60%);clip-path:polygon(50% 0,100% 40%,50% 100%,0 40%)}
+.panel{background:#0E0B14cc;border:4px solid #3A3047;border-radius:8px;padding:clamp(16px,3vw,32px);display:flex;flex-direction:column;gap:18px}
+.task{font-size:clamp(22px,3.4vw,30px);font-weight:600;margin:0}
+.task b{color:var(--gold)}
+.hint{font-size:clamp(18px,2.6vw,22px);color:var(--ink-soft);margin:0}
+.progress{display:flex;gap:6px}
+.progress span{flex:1;height:10px;background:#2E2639;border-radius:2px}
+.progress span.done{background:var(--grass)}
+.progress span.now{background:var(--gold)}
+.sentence{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;min-height:120px}
+.block{font-family:var(--body);font-weight:600;font-size:clamp(24px,4.4vw,38px);color:#fff;min-width:64px;padding:18px 18px 16px;border:0;border-radius:4px;cursor:pointer;
+  background:
+    linear-gradient(90deg,transparent 0 30%,#0000001a 30% 34%,transparent 34% 70%,#0000001a 70% 74%,transparent 74%),
+    linear-gradient(0deg,#00000022 0 8px,transparent 8px),
+    linear-gradient(#ffffff22 0 6px,transparent 6px),
+    var(--stone);
+  box-shadow:inset 0 0 0 3px var(--stone-dark),0 6px 0 #2B2D31;text-shadow:2px 2px 0 #00000088;transition:transform .12s}
+.block:hover{transform:translateY(-3px)}
+.block:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+.block.found{cursor:default;color:#063A3C;text-shadow:none;background:linear-gradient(135deg,#C9FFFD,var(--diamond) 55%,#22B6BC);box-shadow:inset 0 0 0 3px #1B8E93,0 6px 0 #0F5E62;animation:pop .35s ease}
+.block.found:hover{transform:none}
+.block.wrong{animation:shake .35s ease}
+.punct{font-family:var(--body);font-weight:600;font-size:clamp(24px,4.4vw,38px);padding-bottom:16px}
+.tag{display:block;font-family:var(--display);font-size:16px;letter-spacing:1px;margin-top:4px;color:#063A3C}
+.feedback{min-height:40px;font-size:clamp(20px,3vw,26px);font-weight:600;margin:0}
+.feedback.good{color:var(--grass)} .feedback.bad{color:var(--bad)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+button.btn{font-family:var(--display);font-weight:700;font-size:26px;color:#10230A;background:var(--grass);border:0;border-radius:4px;padding:14px 28px;cursor:pointer;box-shadow:0 6px 0 #3E7D27}
+button.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #3E7D27}
+button.btn:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+button.btn.ghost{background:#3A3047;color:var(--ink);box-shadow:0 6px 0 #241D2E}
+.example{background:var(--paper);color:var(--paper-ink);border-radius:6px;padding:18px 22px;display:flex;flex-direction:column;gap:8px}
+.example .lbl{font-family:var(--display);font-weight:700;color:#B5520F;font-size:20px;letter-spacing:1px}
+.example p{margin:0;font-size:clamp(22px,3.4vw,30px)}
+.example u{text-decoration-thickness:4px;text-decoration-color:#2F7D1E;color:#2F7D1E;font-weight:600}
+.rule{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.rule div{background:#2E2639;border-radius:6px;padding:12px;text-align:center;font-size:20px}
+.rule b{display:block;font-family:var(--display);color:var(--gold);font-size:22px}
+.ground{height:28px;background:linear-gradient(var(--grass) 0 10px,var(--dirt) 10px);border-radius:2px}
+.big{font-family:var(--display);font-size:clamp(40px,8vw,72px);color:var(--gold);margin:0;text-shadow:4px 4px 0 #000;line-height:1}
+.stars{font-size:48px;letter-spacing:6px;color:var(--gold)}
+@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media (max-width:560px){.rule{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>NOUN MINER</h1>
+    <div class="tally" aria-live="polite"><span class="gem" aria-hidden="true"></span><span id="gems">0</span>&nbsp;diamonds</div>
+  </header>
+  <div class="ground" aria-hidden="true"></div>
+  <main class="panel" id="screen"></main>
+</div>
+
+<script>
+const ROUNDS = [
+  {s:"Tyler found a torch.", n:{Tyler:"person", torch:"thing"}},
+  {s:"Evan made a pickaxe.", n:{Evan:"person", pickaxe:"thing"}},
+  {s:"The creeper broke the base.", n:{creeper:"mob", base:"place"}},
+  {s:"Tobi put a torch in the cave.", n:{Tobi:"person", torch:"thing", cave:"place"}},
+  {s:"Candace made a roof.", n:{Candace:"person", roof:"thing"}},
+  {s:"Tyler saw a pig and a sheep.", n:{Tyler:"person", pig:"animal", sheep:"animal"}},
+  {s:"Grace hid in the house.", n:{Grace:"person", house:"place"}}
+];
+const screen = document.getElementById('screen');
+const gemsEl = document.getElementById('gems');
+let round = 0, gems = 0, misses = 0, found = new Set();
+
+let ac;
+function beep(f1, f2, dur){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type='square'; o.frequency.setValueAtTime(f1, ac.currentTime);
+    o.frequency.linearRampToValueAtTime(f2, ac.currentTime+dur);
+    g.gain.setValueAtTime(.06, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime+dur);
+    o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime+dur);
+  }catch(e){}
+}
+
+function intro(){
+  screen.innerHTML = `
+    <p class="task">Naming words are called <b>NOUNS</b>. They name a person, place, animal or thing.</p>
+    <div class="rule">
+      <div><b>PERSON</b>Tyler</div><div><b>PLACE</b>cave</div><div><b>ANIMAL</b>pig</div><div><b>THING</b>torch</div>
+    </div>
+    <div class="example">
+      <span class="lbl">EXAMPLE</span>
+      <p><u>Grace</u> drew a <u>map</u>.</p>
+      <p style="font-size:20px">Grace is a person. Map is a thing. So we mine 2 nouns!</p>
+    </div>
+    <p class="hint">Tap the stone blocks that are naming words. Each noun turns into a diamond!</p>
+    <div class="row"><button class="btn" id="go">START MINING</button></div>`;
+  document.getElementById('go').onclick = () => { round = 0; gems = 0; misses = 0; gemsEl.textContent = 0; play(); };
+}
+
+function play(){
+  const r = ROUNDS[round];
+  found = new Set();
+  const total = Object.keys(r.n).length;
+  const parts = r.s.replace(/\.$/,'').split(' ');
+  screen.innerHTML = `
+    <div class="progress" aria-hidden="true">${ROUNDS.map((_,i)=>`<span class="${i<round?'done':i===round?'now':''}"></span>`).join('')}</div>
+    <p class="task">Sentence ${round+1} of ${ROUNDS.length}: find <b>${total} nouns</b>.</p>
+    <div class="sentence" id="sent"></div>
+    <p class="feedback" id="fb" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="next" hidden>NEXT ➜</button></div>`;
+  const sent = document.getElementById('sent');
+  parts.forEach((w,i) => {
+    const b = document.createElement('button');
+    b.className = 'block'; b.type = 'button'; b.textContent = w;
+    b.onclick = () => tap(b, w, r, total);
+    sent.appendChild(b);
+    if(i === parts.length-1){ const p=document.createElement('span'); p.className='punct'; p.textContent='.'; sent.appendChild(p); }
+  });
+  document.getElementById('next').onclick = () => { round++; round < ROUNDS.length ? play() : finish(); };
+}
+
+function tap(b, w, r, total){
+  const fb = document.getElementById('fb');
+  if(b.classList.contains('found')) return;
+  if(r.n[w] && !found.has(w)){
+    found.add(w); gems++; gemsEl.textContent = gems;
+    b.classList.add('found');
+    const t = document.createElement('span'); t.className='tag'; t.textContent = r.n[w].toUpperCase(); b.appendChild(t);
+    beep(660, 1320, .15);
+    if(found.size === total){
+      fb.className='feedback good';
+      fb.textContent = ['Great mining!','Super job!','You found them all!','Diamond hero!'][round%4];
+      document.getElementById('next').hidden = false;
+      document.getElementById('next').textContent = round === ROUNDS.length-1 ? 'SEE MY DIAMONDS ➜' : 'NEXT ➜';
+      document.getElementById('next').focus();
+    } else {
+      fb.className='feedback good'; fb.textContent = `Yes! "${w}" is a ${r.n[w]}. Find ${total-found.size} more.`;
+    }
+  } else {
+    misses++;
+    b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong');
+    beep(220, 140, .2);
+    fb.className='feedback bad';
+    fb.textContent = `"${w}" is not a naming word. Is it a person, place, animal or thing?`;
+  }
+}
+
+function finish(){
+  const stars = misses <= 2 ? 3 : misses <= 6 ? 2 : 1;
+  screen.innerHTML = `
+    <p class="big">YOU MINED ${gems} DIAMONDS!</p>
+    <div class="stars" aria-label="${stars} out of 3 stars">${'★'.repeat(stars)}<span style="color:#3A3047">${'★'.repeat(3-stars)}</span></div>
+    <p class="task">You are a <b>Noun Miner</b>! Remember: names like <b>T</b>yler and <b>G</b>race start with a Capital letter.</p>
+    <div class="row"><button class="btn" id="again">PLAY AGAIN</button><button class="btn ghost" id="home">HOW TO PLAY</button></div>`;
+  beep(523, 1046, .4);
+  document.getElementById('again').onclick = () => { round=0; gems=0; misses=0; gemsEl.textContent=0; play(); };
+  document.getElementById('home').onclick = intro;
+}
+intro();
+</script>
+
+</body></html>

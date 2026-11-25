@@ -1,0 +1,225 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Story Crafting Table</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Lexend:wght@400;600;700&display=swap">
+<style>
+/* Layout: a daylight overworld — step tabs on top, a plank "crafting table" panel with choices, and a live story scroll beside it. Single bright look by choice. */
+:root{
+  --sky:#9fd4ff; --sky2:#d8efff; --plank:#c8955a; --plank-dk:#8e6234; --paper:#fff8ea; --ink:#2b1d10;
+  --grass:#5fae35; --leaf:#3f7d22; --gold:#ffcf3f; --red:#d9483b; --muted:#6b5640;
+  --display:"Silkscreen","Courier New",monospace; --body:"Lexend",system-ui,sans-serif;
+  color-scheme:light;
+}
+body{background:linear-gradient(var(--sky),var(--sky2) 70%);background-color:var(--sky);color:var(--ink);font-family:var(--body);font-size:16px;min-height:100%;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+h1{font-family:var(--display);font-size:clamp(26px,5.5vw,42px);margin:0;line-height:1;color:#fff;text-shadow:3px 3px 0 var(--plank-dk),5px 5px 0 rgba(0,0,0,.2)}
+.sub{margin:6px 0 0;color:#24425c;font-size:15px}
+.stars{font-family:var(--display);background:var(--paper);border:3px solid var(--ink);padding:8px 12px;font-size:15px;box-shadow:4px 4px 0 var(--ink)}
+.stars b{color:#c98a00}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.step{font-family:var(--display);font-size:12px;padding:8px 10px;background:rgba(255,255,255,.55);border:2px solid var(--ink);color:var(--ink)}
+.step.on{background:var(--gold)} .step.done{background:var(--grass);color:#fff}
+.main{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:800px){.main{grid-template-columns:1fr}}
+.table{background:var(--plank);border:4px solid var(--ink);box-shadow:6px 6px 0 rgba(0,0,0,.25);padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0;
+  background-image:repeating-linear-gradient(0deg,transparent 0 30px,var(--plank-dk) 30px 33px);}
+.table h2{font-family:var(--display);font-size:clamp(18px,3vw,24px);margin:0;color:#fff;text-shadow:2px 2px 0 var(--ink)}
+.hint{margin:-8px 0 0;color:#3a2410;font-weight:600}
+.slot{background:var(--paper);border:3px solid var(--ink);padding:14px;display:flex;flex-direction:column;gap:10px}
+.frame{font-size:19px;font-weight:700;line-height:1.4}
+.frame .blank{display:inline-block;min-width:80px;border-bottom:3px dashed var(--plank-dk);color:#1e6fb5;padding:0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;cursor:pointer}
+.chipb{background:#ece0c8;border:2px solid var(--ink);padding:8px 12px;font-weight:600;font-size:15px;color:var(--ink);box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+.chipb:hover{transform:translateY(-2px)} .chipb[aria-pressed="true"]{background:var(--gold)}
+.chipb:focus-visible,.btn:focus-visible,input:focus-visible{outline:3px solid #1e6fb5;outline-offset:2px}
+input[type=text]{font:inherit;font-size:15px;border:2px solid var(--ink);padding:8px 10px;background:#fff;color:var(--ink);width:100%;max-width:340px}
+.label{font-family:var(--display);font-size:12px;color:var(--muted);letter-spacing:1px}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.btn{font-family:var(--display);font-size:15px;background:var(--grass);color:#fff;border:3px solid var(--ink);padding:12px 18px;box-shadow:4px 4px 0 var(--ink);text-shadow:1px 1px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn.ghost{background:var(--paper);color:var(--ink);text-shadow:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.preview{background:#000;border:4px solid var(--ink);max-width:100%}
+canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.scroll{background:var(--paper);border:4px solid var(--ink);padding:18px;box-shadow:6px 6px 0 rgba(0,0,0,.2)}
+.scroll h3{font-family:var(--display);font-size:14px;margin:0 0 10px;color:var(--plank-dk)}
+.story{font-size:18px;line-height:1.65;margin:0}
+.story .new{background:#fff1a8}
+.power{display:grid;gap:12px}
+.pw{background:var(--paper);border:3px solid var(--ink);padding:14px;display:flex;flex-direction:column;gap:10px}
+.pw .top{display:flex;align-items:center;gap:10px}
+.badge{width:38px;height:38px;flex:none;display:grid;place-items:center;font-family:var(--display);font-size:20px;border:3px solid var(--ink);background:#ece0c8}
+.pw.got .badge{background:var(--gold)}
+.pw .title{font-weight:700} .pw .ex{color:var(--muted);font-size:14px}
+.final{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.hero{font-family:var(--display);font-size:clamp(20px,4vw,30px);color:#fff;text-shadow:2px 2px 0 var(--ink);margin:0}
+.toast{font-size:14px;font-weight:600;color:#fff;min-height:20px}
+@media (prefers-reduced-motion:reduce){.chipb{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>STORY CRAFTING TABLE</h1>
+      <p class="sub">Minecraft Storytellers · Read. Write. Create. Craft your build, write your story, then power it up!</p>
+    </div>
+    <div class="stars" aria-live="polite">STARS <b id="starCount">0</b>/6</div>
+  </header>
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+  <div class="main">
+    <section class="table" id="panel" aria-live="polite"></section>
+    <aside class="side">
+      <div class="preview"><canvas id="cv" width="160" height="96" aria-label="Picture of your build"></canvas></div>
+      <div class="scroll"><h3>MY STORY</h3><p class="story" id="story"></p></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const STEP_NAMES=["1 · BUILD","2 · STORY","3 · IMPROVE","4 · SHARE"];
+const S={step:0,build:"house",mat:"wood",tool:"pickaxe",first:"",then:"",final:"",feel:"",because:"",sudden:false,lastAdd:""};
+
+const OPT={
+ build:["house","igloo","wall","tower","boat","underwater base"],
+ mat:["wood","stone","snow","ice","glass","diamond","sand"],
+ tool:["pickaxe","axe","shovel"],
+ first:["went exploring in the forest","collected wood with Evan","found a dark cave","planned a base with Grace"],
+ then:["a creeper came","night fell and zombies came","a big storm","my build fell down"],
+ final:["rebuilt it with my friends","built a wall to stay safe","ran home safely","found a shiny diamond"],
+ feel:["nervous","excited","scared","brave","proud","happy"],
+ because:["I wanted to stay safe","my friends needed a home","I love building","the night was coming"],
+};
+
+/* ---------- sound ---------- */
+let ac;function beep(f,d,v=.05){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type="square";o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(ac.destination);const t=ac.currentTime;g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d)}catch(e){}}
+const pop=()=>{beep(660,.06);setTimeout(()=>beep(880,.08),60)};
+const fanfare=()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.16,.06),i*110));
+
+/* ---------- build preview ---------- */
+const MAT={wood:["#b07a3e","#8a5a2a"],stone:["#8a8a8a","#6c6c6c"],glass:["#cdeefc","#9fd6ef"],diamond:["#5ee6e0","#2fb8b2"],sand:["#e8d69a","#cdb877"],snow:["#f7fbff","#c9d8e6"],ice:["#a9d4f5","#7fb4de"]};
+const SHAPES={ // # = material, r = roof/leaf, w = wood trunk, d = door, . = empty
+ "house":["....rrrrrr....","...rrrrrrrr...","..rrrrrrrrrr..","...########...","...#..##..#...","...########...","...###dd###...","...###dd###..."],
+ "igloo":["..............",".....####.....","...########...","..##########..",".############.",".############.",".#####dd#####.","######dd######"],
+ "wall":["#.#.#.#.#.#.#.","##############","##############","##############","##############","##############","##############","##############"],
+ "tower":["....#.#.#.....","....#####.....","....#.#.#.....","....#####.....","....##.##.....","....#####.....","....##d##.....","....##d##....."],
+ "boat":["..............","......w.......","......w.......","....rrrrr.....","......w.......",".############.","..##########..","...########..."],
+ "underwater base":["..............","....######....","...#..##..#...","..##########..","..#.##..##.#..","..##########..","..##########..","..###dddd###.."],
+};
+const cv=$("#cv"),cx=cv.getContext("2d");
+function drawBuild(){
+  const W=cv.width,H=cv.height,T=8,water=S.build==="underwater base"||S.build==="boat";
+  cx.fillStyle=S.build==="underwater base"?"#1d5f9e":"#8fd0ff";cx.fillRect(0,0,W,H);
+  if(S.build!=="underwater base"){cx.fillStyle="#fff";cx.fillRect(14,8,20,4);cx.fillRect(18,5,10,3);cx.fillRect(110,14,24,4);cx.fillStyle="#ffe14a";cx.fillRect(136,4,12,12)}
+  else{cx.fillStyle="rgba(255,255,255,.35)";[[20,20],[40,40],[130,25],[120,55]].forEach(([x,y])=>cx.fillRect(x,y,2,2))}
+  // ground
+  const gy=H-16;
+  if(S.build==="boat"){cx.fillStyle="#2f7fd0";cx.fillRect(0,gy-4,W,20);cx.fillStyle="#5aa6ee";for(let x=0;x<W;x+=12)cx.fillRect(x,gy-4,6,2)}
+  else if(S.build==="underwater base"){cx.fillStyle="#d8c27a";cx.fillRect(0,gy,W,16)}
+  else if(S.build==="igloo"){cx.fillStyle="#f2f7fc";cx.fillRect(0,gy,W,16);cx.fillStyle="#d3e2ef";for(let x=0;x<W;x+=10)cx.fillRect(x,gy+6,5,2)}
+  else{cx.fillStyle="#5fae35";cx.fillRect(0,gy,W,4);cx.fillStyle="#8b5a2b";cx.fillRect(0,gy+4,W,12)}
+  const sh=SHAPES[S.build],[m,md]=MAT[S.mat]||MAT.wood;const ox=Math.floor((W-14*T/1.4)/2),cell=Math.floor(T/1.4*1)||5;
+  const C=6,x0=Math.floor((W-14*C)/2),y0=gy-sh.length*C+(S.build==="boat"?4:0);
+  sh.forEach((row,r)=>[...row].forEach((ch,c)=>{
+    if(ch===".")return;const x=x0+c*C,y=y0+r*C;
+    let a=m,b=md;
+    if(ch==="r"){a=S.build==="tree house"?"#3f9a2a":S.build==="boat"?"#f4f1e6":"#b8432f";b=S.build==="tree house"?"#2f7a1e":S.build==="boat"?"#d8d2c0":"#8e3222"}
+    if(ch==="w"){a="#7a5230";b="#5c3c22"}
+    if(ch==="d"){a="#5c3c22";b="#3e2814"}
+    cx.fillStyle=a;cx.fillRect(x,y,C,C);cx.fillStyle=b;cx.fillRect(x,y+C-1,C,1);cx.fillRect(x+C-1,y,1,C);
+    if(S.mat==="glass"&&ch==="#"){cx.fillStyle="rgba(255,255,255,.7)";cx.fillRect(x+1,y+1,1,2)}
+  }));
+}
+
+/* ---------- story text ---------- */
+const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
+const an=w=>/^[aeiou]/i.test(w)?"an":"a";
+function sentences(){
+  const out=[];
+  out.push({k:"build",t:`I built ${an(S.build)} ${S.build}${S.because?` because ${S.because}`:""}.`});
+  out.push({k:"mat",t:`It is made of ${S.mat}. I used my ${S.tool}.`});
+  if(S.first)out.push({k:"first",t:`First, I ${S.first}.`});
+  if(S.then){
+    if(S.sudden){const thing=S.then;out.push({k:"then",t:/came$/.test(thing)?`Suddenly, ${thing}!`:`Suddenly, ${thing} happened!`})}
+    else out.push({k:"then",t:`Then, ${S.then} happened.`});
+  }
+  if(S.feel&&S.then)out.push({k:"feel",t:`I felt ${S.feel}.`});
+  if(S.final)out.push({k:"final",t:`Finally, I ${S.final}.`});
+  return out;
+}
+function renderStory(){
+  const s=sentences();$("#story").innerHTML=s.map(x=>`<span class="${x.k===S.lastAdd?"new":""}">${esc(x.t)}</span>`).join(" ");
+  $("#starCount").textContent=stars();drawBuild();
+}
+function stars(){return (S.first?1:0)+(S.then?1:0)+(S.final?1:0)+(S.feel?1:0)+(S.because?1:0)+(S.sudden?1:0)}
+const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- UI helpers ---------- */
+function chipRow(key,opts,{toggle=false}={}){
+  return `<div class="chips" role="group">${opts.map(o=>`<button class="chipb" data-k="${key}" data-v="${esc(o)}" aria-pressed="${S[key]===o}">${esc(o)}</button>`).join("")}</div>`;
+}
+function ownInput(key,ph){return `<input type="text" id="own-${key}" data-k="${key}" placeholder="${ph}" maxlength="60" value="${OPT[key].includes(S[key])?"":esc(S[key])}" aria-label="Write your own">`}
+function blank(v){return `<span class="blank">${v?esc(v):"&nbsp;"}</span>`}
+function wire(){
+  $("#panel").querySelectorAll(".chipb").forEach(b=>b.onclick=()=>{const k=b.dataset.k;S[k]=S[k]===b.dataset.v&&!["build","mat","tool"].includes(k)?"":b.dataset.v;S.lastAdd=k==="because"?"build":k;pop();render(true)});
+  $("#panel").querySelectorAll("input[type=text]").forEach(i=>i.oninput=()=>{const k=i.dataset.k;S[k]=i.value.trim().replace(/[.!]+$/,"");S.lastAdd=k==="because"?"build":k;renderStory();
+    $("#panel").querySelectorAll(`.chipb[data-k="${k}"]`).forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S[k]));
+    const bl=i.closest(".slot")?.querySelector(".blank");if(bl)bl.innerHTML=S[k]?esc(S[k]):"&nbsp;";updNav()});
+}
+function updNav(){const n=$("#next");if(n&&S.step===1)n.disabled=!(S.first&&S.then&&S.final)}
+
+/* ---------- steps ---------- */
+function render(keepFocus){
+  const focusId=keepFocus&&document.activeElement?document.activeElement.dataset?.v+"|"+document.activeElement.dataset?.k:null;
+  $("#steps").innerHTML=STEP_NAMES.map((n,i)=>`<span class="step ${i===S.step?"on":i<S.step?"done":""}">${n}</span>`).join("");
+  const P=$("#panel");
+  if(S.step===0){
+    P.innerHTML=`<h2>WHAT DID YOU BUILD?</h2><p class="hint">Imagine and plan: choose your build, its material and your tool.</p>
+    <div class="slot"><div class="frame">I built ${an(S.build)} ${blank(S.build)}.</div>${chipRow("build",OPT.build)}</div>
+    <div class="slot"><div class="frame">It is made of ${blank(S.mat)}.</div>${chipRow("mat",OPT.mat)}</div>
+    <div class="slot"><div class="frame">I used my ${blank(S.tool)}.</div>${chipRow("tool",OPT.tool)}</div>
+    <div class="nav"><span></span><button class="btn" id="next">NEXT: STORY ▶</button></div>`;
+  }else if(S.step===1){
+    P.innerHTML=`<h2>MAKE YOUR OWN STORY</h2><p class="hint">Every story needs a Beginning, a Problem and an Ending. Pick one or write your own.</p>
+    <div class="slot"><span class="label">1 · BEGINNING</span><div class="frame">First, I ${blank(S.first)}.</div>${chipRow("first",OPT.first)}${ownInput("first","or write: built a farm")}</div>
+    <div class="slot"><span class="label">2 · PROBLEM</span><div class="frame">Then, ${blank(S.then)} happened.</div>${chipRow("then",OPT.then)}${ownInput("then","or write: a spider came")}</div>
+    <div class="slot"><span class="label">3 · ENDING</span><div class="frame">Finally, I ${blank(S.final)}.</div>${chipRow("final",OPT.final)}${ownInput("final","or write: had a party")}</div>
+    <div class="nav"><button class="btn ghost" id="back">◀ BACK</button><button class="btn" id="next">NEXT: IMPROVE ▶</button></div>`;
+  }else if(S.step===2){
+    P.innerHTML=`<h2>IMPROVE YOUR STORY</h2><p class="hint">Use all three power-ups to earn 6 stars!</p>
+    <div class="power">
+     <div class="pw ${S.feel?"got":""}"><div class="top"><div class="badge">★</div><div><div class="title">Add a feeling word</div><div class="ex">nervous, excited… "I felt nervous."</div></div></div>${chipRow("feel",OPT.feel)}</div>
+     <div class="pw ${S.because?"got":""}"><div class="top"><div class="badge">+</div><div><div class="title">Add "because"</div><div class="ex">I built ${an(S.build)} ${esc(S.build)} because ______.</div></div></div>${chipRow("because",OPT.because)}${ownInput("because","or write your own reason")}</div>
+     <div class="pw ${S.sudden?"got":""}"><div class="top"><div class="badge">!</div><div><div class="title">Add "suddenly"</div><div class="ex">Turn your problem into a surprise: "Suddenly, a creeper came!"</div></div></div>
+       <div class="chips"><button class="chipb" id="sud" aria-pressed="${S.sudden}">${S.sudden?"Suddenly is ON!":"Make it SUDDEN!"}</button></div></div>
+    </div>
+    <div class="nav"><button class="btn ghost" id="back">◀ BACK</button><button class="btn" id="next">FINISH ▶</button></div>`;
+  }else{
+    const n=stars();
+    P.innerHTML=`<div class="final"><h2 class="hero">GREAT JOB!</h2>
+     <p class="hint" style="margin:0">You earned <b>${n}</b> of 6 stars. ${n===6?"You're a Minecraft Reading &amp; Writing Hero!":"Go back and use every power-up to become a Reading &amp; Writing Hero."}</p>
+     <div class="slot" style="align-self:stretch"><span class="label">SHARE</span><div class="frame" style="font-weight:600">Read your story out loud to a friend, then tell them how you built it.</div>
+      <div class="chips"><button class="chipb" id="read">🔊 Read it to me</button><button class="chipb" id="copy">Copy my story</button></div><div class="toast" id="toast" style="color:var(--ink)"></div></div>
+     <div class="nav" style="align-self:stretch"><button class="btn ghost" id="back">◀ EDIT</button><button class="btn" id="restart">NEW STORY</button></div></div>`;
+    fanfare();
+  }
+  wire();
+  const nx=$("#next"),bk=$("#back");
+  if(nx)nx.onclick=()=>{S.step++;S.lastAdd="";render();window.scrollTo({top:0,behavior:"smooth"})};
+  if(bk)bk.onclick=()=>{S.step--;S.lastAdd="";render()};
+  const sud=$("#sud");if(sud)sud.onclick=()=>{S.sudden=!S.sudden;S.lastAdd="then";pop();render(true)};
+  const rd=$("#read");if(rd)rd.onclick=()=>{const txt=sentences().map(x=>x.t).join(" ");try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.rate=.9;speechSynthesis.speak(u)}catch(e){$("#toast").textContent="Read-aloud isn't available here. Try reading it yourself!"}};
+  const cp=$("#copy");if(cp)cp.onclick=()=>{const txt=sentences().map(x=>x.t).join(" ");navigator.clipboard.writeText(txt).then(()=>$("#toast").textContent="Copied!").catch(()=>{const r=document.createRange();r.selectNodeContents($("#story"));const s=getSelection();s.removeAllRanges();s.addRange(r);$("#toast").textContent="Story selected. Press Ctrl+C to copy."})};
+  const rs=$("#restart");if(rs)rs.onclick=()=>{Object.assign(S,{step:0,build:"house",mat:"wood",tool:"pickaxe",first:"",then:"",final:"",feel:"",because:"",sudden:false,lastAdd:""});render()};
+  updNav();renderStory();
+  if(focusId){const [v,k]=focusId.split("|");const el=[...P.querySelectorAll(".chipb")].find(b=>b.dataset.v===v&&b.dataset.k===k)||(k===undefined?$("#sud"):null);el&&el.focus({preventScroll:true})}
+}
+render();
+</script>
+
+</body></html>

@@ -1,0 +1,100 @@
+#enrollModal.lead-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 16px;
+}
+#enrollModal.lead-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+#enrollModal .lead-modal-panel {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transform: translateY(20px) scale(0.98);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#enrollModal.lead-modal-overlay.open .lead-modal-panel {
+  transform: translateY(0) scale(1);
+}
+#enrollModal .lead-modal-panel .mclose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0,0,0,0.05);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: all 0.2s;
+}
+#enrollModal .lead-modal-panel .mclose:hover {
+  background: rgba(0,0,0,0.1);
+  color: #1e293b;
+}
+#enrollModal .lead-modal-header h3 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+#enrollModal .lead-modal-header p {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.5;
+}
+#enrollModal .form-group {
+  margin-bottom: 20px;
+}
+#enrollModal .form-group label {
+  display: block;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+#enrollModal .form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s;
+  background: #f8fafc;
+  color: #0f172a;
+  height: auto;
+  box-sizing: border-box;
+}
+#enrollModal .form-control:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+}
+#enrollModal .btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

@@ -1,0 +1,581 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Nunito:wght@500;700;800&display=swap');
+
+.ym-lab {
+  --stone: #141a24;
+  --wall: #1f2836;
+  --wall-2: #2a3546;
+  --torch: #f2b84b;
+  --bronze: #c9853a;
+  --sea: #4cc3c9;
+  --ink: #eef1f6;
+  --mute: #a5b0c2;
+  --good: #5fd08a;
+  --bad: #ff6b6b;
+  --display: "Cinzel", "Trajan Pro", Georgia, serif;
+  --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+  background: var(--stone);
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.5;
+  border-radius: 24px;
+  padding: 20px 16px 48px;
+  min-height: 80vh;
+  box-sizing: border-box;
+}
+
+.ym-lab * {
+  box-sizing: border-box;
+}
+
+.ym-lab button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ym-lab button:focus-visible,
+.ym-lab [tabindex]:focus-visible {
+  outline: 3px solid var(--sea);
+  outline-offset: 2px;
+}
+
+.ym-lab .wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+/* Header */
+.ym-lab header.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--wall);
+  border: 1px solid var(--wall-2);
+  border-radius: 14px;
+}
+
+.ym-lab .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ym-lab .delta {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--stone);
+  background: var(--torch);
+  clip-path: polygon(50% 4%, 98% 96%, 2% 96%);
+  padding-top: 10px;
+}
+
+.ym-lab .brand h1 {
+  font-family: var(--display);
+  font-size: 20px;
+  margin: 0;
+  letter-spacing: .04em;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.ym-lab .brand p {
+  margin: 0;
+  color: var(--mute);
+  font-size: 14px;
+}
+
+.ym-lab .xpbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ym-lab .xp {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--torch);
+}
+
+.ym-lab .rank {
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--wall-2);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.ym-lab .barwrap {
+  width: 140px;
+  height: 8px;
+  background: var(--wall-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ym-lab .bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--bronze), var(--torch));
+  width: 0;
+  transition: width .4s;
+}
+
+/* Hub */
+.ym-lab .intro {
+  color: var(--mute);
+  margin: 0;
+  max-width: 65ch;
+  font-size: 1rem;
+}
+
+.ym-lab .hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px;
+}
+
+.ym-lab .card {
+  text-align: left;
+  background: var(--wall);
+  color: var(--ink);
+  border: 1px solid var(--wall-2);
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  border-top: 4px solid var(--c, var(--torch));
+  transition: transform .15s, border-color .15s;
+}
+
+.ym-lab .card:hover {
+  transform: translateY(-3px);
+  border-color: var(--c, var(--torch));
+}
+
+.ym-lab .card .tag {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--c, var(--torch));
+  font-weight: 800;
+}
+
+.ym-lab .card h2 {
+  font-family: var(--display);
+  font-size: 18px;
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.ym-lab .card p {
+  margin: 0;
+  color: var(--mute);
+  font-size: 15px;
+}
+
+.ym-lab .card .best {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.ym-lab .card.active {
+  outline: 2px solid var(--c, var(--torch));
+}
+
+/* Panel */
+.ym-lab .panel {
+  background: var(--wall);
+  border: 1px solid var(--wall-2);
+  border-radius: 16px;
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+  animation: ym-lab-pop 0.3s ease;
+}
+
+@keyframes ym-lab-pop {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.ym-lab .panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.ym-lab .panel h2 {
+  font-family: var(--display);
+  margin: 0;
+  font-size: 24px;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.ym-lab .how {
+  color: var(--mute);
+  margin: 0;
+  max-width: 65ch;
+  font-size: 1rem;
+}
+
+.ym-lab .meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ym-lab .pill {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--wall-2);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.ym-lab .stage {
+  background: var(--stone);
+  border-radius: 12px;
+  padding: 22px 16px;
+  min-height: 150px;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.ym-lab .btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.ym-lab .btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-weight: 800;
+  font-size: 16px;
+  background: var(--wall-2);
+  color: var(--ink);
+  min-width: 120px;
+  transition: transform .1s, background .15s;
+}
+
+.ym-lab .btn:hover {
+  background: #36445a;
+}
+
+.ym-lab .btn:active {
+  transform: scale(.97);
+}
+
+.ym-lab .btn.primary {
+  background: var(--torch);
+  color: var(--stone);
+}
+
+.ym-lab .btn.primary:hover {
+  background: #ffc964;
+}
+
+.ym-lab .btn.big {
+  font-size: 20px;
+  padding: 16px 28px;
+  min-width: 160px;
+}
+
+.ym-lab .btn.open {
+  background: var(--sea);
+  color: var(--stone);
+}
+
+.ym-lab .btn.closed {
+  background: var(--bronze);
+  color: var(--stone);
+}
+
+.ym-lab .btn.ok {
+  background: var(--good);
+  color: var(--stone);
+}
+
+.ym-lab .btn.no {
+  background: var(--bad);
+  color: var(--stone);
+}
+
+.ym-lab .btn[disabled] {
+  opacity: .45;
+  cursor: default;
+}
+
+.ym-lab .feedback {
+  min-height: 26px;
+  font-weight: 800;
+}
+
+.ym-lab .feedback.good {
+  color: var(--good);
+}
+
+.ym-lab .feedback.bad {
+  color: var(--bad);
+}
+
+.ym-lab .small {
+  font-size: 14px;
+  color: var(--mute);
+}
+
+/* Syllable slicer */
+.ym-lab .slicer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(30px, 7vw, 52px);
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.ym-lab .slicer .ch {
+  padding: 0 1px;
+}
+
+.ym-lab .gap {
+  width: 22px;
+  height: 1.3em;
+  border: 0;
+  background: transparent;
+  position: relative;
+  padding: 0;
+  margin: 0 1px;
+}
+
+.ym-lab .gap::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 15%;
+  bottom: 15%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,.15);
+  border-radius: 2px;
+}
+
+.ym-lab .gap:hover::after {
+  background: var(--mute);
+}
+
+.ym-lab .gap.cut::after {
+  width: 5px;
+  background: var(--torch);
+  box-shadow: 0 0 10px var(--torch);
+  top: 0;
+  bottom: 0;
+}
+
+.ym-lab .gap.wrong::after {
+  background: var(--bad);
+  box-shadow: 0 0 10px var(--bad);
+}
+
+.ym-lab .gap.missed::after {
+  background: var(--good);
+  width: 5px;
+  top: 0;
+  bottom: 0;
+  opacity: .8;
+}
+
+/* Gate */
+.ym-lab .timer {
+  width: 100%;
+  max-width: 420px;
+  height: 10px;
+  background: var(--wall-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.ym-lab .timer > div {
+  height: 100%;
+  background: var(--sea);
+  width: 100%;
+  transition: width 1s linear;
+}
+
+.ym-lab .gate-word {
+  font-size: clamp(36px, 8vw, 64px);
+  font-weight: 800;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ym-lab .gate-word .hi {
+  color: var(--torch);
+  text-shadow: 0 0 18px rgba(242, 184, 75, 0.55);
+  border-bottom: 4px solid var(--torch);
+  padding: 0 4px;
+}
+
+.ym-lab .gate-word .lo {
+  opacity: .35;
+}
+
+.ym-lab .gate-word .dash {
+  opacity: .2;
+}
+
+/* Spotter */
+.ym-lab .step {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--torch);
+  font-weight: 800;
+}
+
+.ym-lab .sentence {
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 700;
+  line-height: 1.4;
+  max-width: 60ch;
+  text-wrap: balance;
+}
+
+.ym-lab .options {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 560px;
+}
+
+.ym-lab .opt {
+  text-align: left;
+  border: 1px solid var(--wall-2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--wall);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform .1s, border-color .15s;
+}
+
+.ym-lab .opt:hover {
+  border-color: var(--torch);
+}
+
+.ym-lab .opt.right {
+  border-color: var(--good);
+  background: rgba(95, 208, 138, 0.15);
+}
+
+.ym-lab .opt.wrongpick {
+  border-color: var(--bad);
+  background: rgba(255, 107, 107, 0.15);
+}
+
+/* Repair */
+.ym-lab .msg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 4px;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  max-width: 650px;
+}
+
+.ym-lab .slot {
+  width: 32px;
+  height: 36px;
+  border-radius: 6px;
+  border: 1px dashed var(--mute);
+  background: var(--wall);
+  color: var(--torch);
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 800;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+}
+
+.ym-lab .slot.filled {
+  border-style: solid;
+  border-color: var(--torch);
+  background: var(--wall-2);
+}
+
+.ym-lab .slot.goodslot {
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.ym-lab .slot.bad {
+  border-color: var(--bad);
+  background: rgba(255, 107, 107, 0.2);
+}
+
+.ym-lab .done {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.ym-lab .done .big {
+  font-family: var(--display);
+  font-size: 30px;
+  color: var(--torch);
+  font-weight: 800;
+}
+
+.ym-lab .shake {
+  animation: ym-lab-shake 0.35s ease;
+}
+
+@keyframes ym-lab-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.ym-lab footer {
+  color: var(--mute);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 20px;
+}
+

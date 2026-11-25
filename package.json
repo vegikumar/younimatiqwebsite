@@ -1,0 +1,41 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "test:e2e": "playwright test",
+        "test:e2e:public": "playwright test e2e/public.spec.js",
+        "test:e2e:student": "playwright test e2e/student.spec.js",
+        "test:e2e:tutor": "playwright test e2e/tutor.spec.js",
+        "test:e2e:admin": "playwright test e2e/admin.spec.js",
+        "test:e2e:deep": "playwright test e2e/*.deep.spec.js e2e/*.flows.spec.js e2e/parent.spec.js e2e/payments.currency.spec.js",
+        "test:e2e:parent": "playwright test e2e/parent.spec.js",
+        "test:e2e:report": "playwright show-report e2e-report"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.65.1",
+        "@tailwindcss/typography": "^0.5.20",
+        "@tailwindcss/vite": "^4.0.0",
+        "autoprefixer": "^10.5.2",
+        "concurrently": "^9.0.1",
+        "laravel-echo": "^2.4.0",
+        "laravel-vite-plugin": "^3.1",
+        "postcss": "^8.5.18",
+        "pusher-js": "^8.6.0",
+        "tailwindcss": "^4.3.2",
+        "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "@chakra-ui/react": "^3.38.0",
+        "@emotion/react": "^11.14.0",
+        "@inertiajs/react": "^3.10.0",
+        "@monaco-editor/react": "^4.7.0",
+        "@vitejs/plugin-react": "^6.1.2",
+        "alpinejs": "^3.13.3",
+        "axios": "^1.21.0",
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1"
+    }
+}

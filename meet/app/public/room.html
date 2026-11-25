@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>VJMeet — Meeting Room</title>
+  <meta name="description" content="Join the VJMeet video meeting room. Secure, browser-based video conferencing with recording, screen sharing, and chat." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link id="favicon-ico" rel="icon" href="/brand/vjmeet/favicon.ico?v=20260918" sizes="any" />
+  <link id="favicon-32" rel="icon" type="image/png" sizes="32x32" href="/brand/vjmeet/favicon-32x32.png?v=20260918" />
+  <link id="favicon-apple" rel="apple-touch-icon" sizes="180x180" href="/brand/vjmeet/apple-touch-icon.png?v=20260918" />
+  <link id="favicon-svg" rel="icon" type="image/svg+xml" href="/brand/vjmeet/favicon.svg?v=20260918" />
+  <meta name="application-name" content="VJMeet" />
+  <meta name="apple-mobile-web-app-title" content="VJMeet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/css/room.css?v=7" />
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-left">
+      <div class="logo-sm">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+          <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor" />
+          <rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor" opacity="0.8" />
+        </svg>
+      </div>
+      <span class="logo-text" id="brand-logo-text">VJMeet</span>
+    </div>
+    <div class="topbar-center">
+      <div class="meeting-info">
+        <span class="meeting-title" id="meeting-title">Meeting</span>
+        <div class="meeting-meta">
+          <span id="participant-count" class="meta-chip">
+            <svg viewBox="0 0 16 16" fill="none" width="12" height="12">
+              <path
+                d="M10.5 7A3.5 3.5 0 1 0 7 3.5 3.5 3.5 0 0 0 10.5 7zM7 9.5A6.5 6.5 0 0 0 .5 16h13A6.5 6.5 0 0 0 7 9.5z"
+                fill="currentColor" opacity="0.7" />
+            </svg>
+            1
+          </span>
+          <span class="meta-chip timer" id="call-timer">00:00</span>
+          <div class="rec-indicator" id="rec-indicator" style="display:none;">
+            <span class="rec-dot"></span> REC
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="copy-link-btn" title="Copy meeting link">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="icon-btn" id="info-btn" title="Meeting info">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+          <path d="M12 8v1M12 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="room-main">
+    <!-- Video Grid -->
+    <div class="video-area" id="video-area">
+      <div class="video-grid" id="video-grid"></div>
+      <div class="captions-overlay" id="captions-overlay" aria-live="polite" style="display:none;">
+        <div class="caption-line" id="caption-line">
+          <span class="caption-name" id="caption-name"></span>
+          <span class="caption-text" id="caption-text"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Panel (Chat / Participants) -->
+    <aside class="side-panel" id="side-panel" style="display:none;">
+      <div class="panel-tabs">
+        <button class="panel-tab active" id="tab-chat" data-panel="chat">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+            <path
+              d="M18 10c0 4.418-3.582 8-8 8a7.95 7.95 0 01-4-.99L2 18l1.009-3.99A7.94 7.94 0 012 10C2 5.582 5.582 2 10 2s8 3.582 8 8z"
+              stroke="currentColor" stroke-width="1.5" />
+          </svg>
+          Chat
+          <span class="unread-badge" id="unread-badge" style="display:none;">0</span>
+        </button>
+        <button class="panel-tab" id="tab-participants" data-panel="participants">
+          <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+            <path
+              d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.5 18a6.5 6.5 0 0113 0H1.5zM17.5 18a4 4 0 00-8 0"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+          People
+        </button>
+      </div>
+
+      <!-- Chat Panel -->
+      <div class="panel-body" id="panel-chat">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-welcome">
+            <div class="chat-welcome-icon">💬</div>
+            <p>Chat with everyone in the meeting</p>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-input-wrap">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Send a message…" maxlength="500" />
+            <button class="emoji-btn" id="emoji-btn" title="Emoji">😊</button>
+            <button class="send-btn" id="send-btn" title="Send">
+              <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <div class="emoji-picker" id="emoji-picker" style="display:none;">
+            <span>👍</span><span>❤️</span><span>😂</span><span>😮</span><span>😢</span>
+            <span>🎉</span><span>🙏</span><span>🔥</span><span>💯</span><span>✅</span>
+            <span>👋</span><span>🚀</span><span>💡</span><span>⭐</span><span>🎯</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Participants Panel -->
+      <div class="panel-body" id="panel-participants" style="display:none;">
+        <div id="host-controls" style="display:none; padding:10px; border-bottom:1px solid var(--border);">
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="host-tool-btn" id="mute-all-btn" style="background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--text); border-radius:6px; padding:6px 8px; font-size:11px; cursor:pointer;">Mute all</button>
+            <button class="host-tool-btn" id="lock-room-btn" style="background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--text); border-radius:6px; padding:6px 8px; font-size:11px; cursor:pointer;">Lock class</button>
+            <button class="host-tool-btn" id="admit-all-btn" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:#34d399; border-radius:6px; padding:6px 8px; font-size:11px; cursor:pointer;">Admit all</button>
+          </div>
+          <div id="waiting-wrap" style="display:none; margin-top:10px;">
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">Waiting to join</div>
+            <div id="waiting-list"></div>
+          </div>
+        </div>
+        <div class="participants-list" id="participants-list"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- BOTTOM CONTROLS -->
+  <div class="controls-bar" id="controls-bar">
+    <div class="control-info" style="flex-shrink: 0;">
+      <span class="cinfo-time" id="cinfo-time">00:00</span>
+    </div>
+    <!-- Mic -->
+    <div class="ctrl-wrap">
+      <button class="ctrl-btn active" id="mic-btn" title="Toggle Microphone">
+        <svg class="icon-on" viewBox="0 0 24 24" fill="none" width="22" height="22">
+          <path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z" fill="currentColor" />
+          <path d="M19 10a7 7 0 0 1-14 0M12 19v3M8 22h8" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+        </svg>
+        <svg class="icon-off" viewBox="0 0 24 24" fill="none" width="22" height="22" style="display:none;">
+          <path d="M12 2a3 3 0 0 1 3 3v4M9 9v2a3 3 0 0 0 5.12 2.12M19 10a7 7 0 0 1-1.27 4M12 19v3M8 22h8M3 3l18 18"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="ctrl-chevron" id="mic-chevron" title="Audio settings">▼</button>
+    </div>
+
+    <!-- Camera -->
+    <div class="ctrl-wrap">
+      <button class="ctrl-btn active" id="camera-btn" title="Toggle Camera">
+        <svg class="icon-on" viewBox="0 0 24 24" fill="none" width="22" height="22">
+          <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor" />
+          <rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor" opacity="0.8" />
+        </svg>
+        <svg class="icon-off" viewBox="0 0 24 24" fill="none" width="22" height="22" style="display:none;">
+          <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4zM3 8a2 2 0 0 1 2-2h4M21 21L3 3"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="ctrl-chevron" id="cam-chevron" title="Video settings">▼</button>
+    </div>
+
+    <!-- Flip Camera -->
+    <button class="ctrl-btn" id="flip-cam-btn" title="Flip Camera">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <path d="M17 10l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M21 6H7a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7 14l-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 18h14a4 4 0 0 0 4-4v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Whiteboard -->
+    <button class="ctrl-btn" id="wb-btn" title="Whiteboard">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8" />
+        <path d="M7 18v2M17 18v2M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <!-- Screen Share -->
+    <button class="ctrl-btn" id="screen-btn" title="Share Screen">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8" />
+        <path d="M8 20h8M12 18v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        <path d="M9 11l3-3 3 3M12 8v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <!-- Record -->
+    <button class="ctrl-btn" id="record-btn" title="Record Meeting">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+        <circle cx="12" cy="12" r="5" fill="currentColor" />
+      </svg>
+    </button>
+
+    <!-- Raise Hand -->
+    <button class="ctrl-btn" id="hand-btn" title="Raise Hand">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <path
+          d="M18 11V7a2 2 0 0 0-4 0v3M14 9V5a2 2 0 0 0-4 0v4M10 8V5a2 2 0 0 0-4 0v8l-1.5-1.5a2 2 0 0 0-2.83 2.83L6 18a6 6 0 0 0 6 6h2a6 6 0 0 0 6-6V11a2 2 0 0 0-4 0"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+
+    <!-- Captions / CC -->
+    <button class="ctrl-btn" id="cc-btn" title="Turn on captions (CC)" aria-label="Captions" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M7 12h3M14 12h3M7 15h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span class="cc-label">CC</span>
+    </button>
+
+
+    <!-- Fullscreen -->
+    <button class="ctrl-btn" id="fullscreen-btn" title="Fullscreen">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <!-- PiP -->
+    <button class="ctrl-btn" id="pip-btn" title="Picture-in-Picture">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/>
+        <rect x="12" y="11" width="7" height="6" rx="1" fill="currentColor"/>
+      </svg>
+    </button>
+
+
+
+    <!-- End Call -->
+    <button class="ctrl-btn leave" id="leave-btn" title="Leave Meeting">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <path d="M2.5 8.5c0 0 1.5-1.5 4-2.5M21.5 8.5c0 0-1.5-1.5-4-2.5M12 12H12" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" />
+        <path d="M1 14.5c2.5-4.5 5.5-7 11-7s8.5 2.5 11 7" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" />
+        <path d="M8 7.5L6 2M16 7.5L18 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+    <!-- Chat -->
+    <button class="ctrl-side-btn" id="chat-btn" title="Toggle Chat">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" />
+      </svg>
+      <span class="unread-dot" id="chat-unread" style="display:none;"></span>
+    </button>
+    <!-- Participants -->
+    <button class="ctrl-side-btn" id="people-btn" title="Toggle Participants">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" />
+        <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" />
+      </svg>
+    </button>
+    <!-- Layout -->
+    <button class="ctrl-side-btn" id="layout-btn" title="Toggle Layout">
+      <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+        <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8" />
+        <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8" />
+        <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8" />
+        <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.8" />
+      </svg>
+    </button>
+  </div>
+
+
+  <!-- Info Panel -->
+  <div class="info-panel" id="info-panel" style="display:none;">
+    <div class="info-panel-inner">
+      <div class="info-panel-header">
+        <h3>Meeting Info</h3>
+        <button class="icon-btn" id="close-info">✕</button>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Meeting ID</span>
+        <span class="info-value" id="info-room-id">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Meeting Link</span>
+        <span class="info-value link-value" id="info-link">—</span>
+      </div>
+      <button class="copy-link-full" id="copy-link-full">
+        <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+          <path d="M8 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2M8 4h8a2 2 0 0 1 2 2v8M8 4a2 2 0 0 0-2 2v2"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Copy invitation link
+      </button>
+    </div>
+  </div>
+
+  <!-- Reaction overlay -->
+  <div class="reactions-container" id="reactions-container"></div>
+
+  <!-- Notifications -->
+  <div class="notifications" id="notifications"></div>
+
+  <!-- Quick Reply Popup -->
+  <div class="chat-popup" id="chat-popup" style="display:none;">
+    <div class="chat-popup-header">
+      <div class="chat-popup-sender" id="chat-popup-sender">Name</div>
+      <button class="icon-btn" id="chat-popup-close" style="width:24px; height:24px;">✕</button>
+    </div>
+    <div class="chat-popup-body" id="chat-popup-msg">Message body</div>
+    <div class="chat-popup-reply">
+      <input type="text" id="chat-popup-input" placeholder="Reply..." maxlength="500" />
+      <button class="send-btn" id="chat-popup-send" title="Send Reply">
+        <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+          <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" style="display:none;"></div>
+
+  <!-- Join Overlay -->
+  <div class="modal-overlay" id="join-overlay">
+    <div class="modal">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" width="28" height="28">
+          <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor" />
+          <rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor" opacity="0.8" />
+        </svg>
+      </div>
+      <h2>Ready to join?</h2>
+      <p>Enter your name and click below to enter the meeting.</p>
+      <input type="text" id="join-name-input" class="chat-input"
+        style="width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: white;"
+        placeholder="Your Name" />
+      <input type="password" id="join-passcode-input" class="chat-input"
+        style="display:none; width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: white;"
+        placeholder="Meeting passcode" />
+      <div id="join-error" style="display:none; color:#f43f5e; font-size:13px; margin-bottom:12px;"></div>
+        
+      <div style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center;">
+        <button id="prejoin-mic-btn" style="background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;" title="Toggle Microphone">
+          <svg class="pj-mic-on" viewBox="0 0 24 24" fill="none" width="22" height="22">
+            <path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z" fill="currentColor" />
+            <path d="M19 10a7 7 0 0 1-14 0M12 19v3M8 22h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <svg class="pj-mic-off" viewBox="0 0 24 24" fill="none" width="22" height="22" style="display:none; color: #ef4444;">
+            <path d="M12 2a3 3 0 0 1 3 3v4M9 9v2a3 3 0 0 0 5.12 2.12M19 10a7 7 0 0 1-1.27 4M12 19v3M8 22h8M3 3l18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+        <button id="prejoin-cam-btn" style="background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;" title="Toggle Camera">
+          <svg class="pj-cam-on" viewBox="0 0 24 24" fill="none" width="22" height="22">
+            <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4z" fill="currentColor" />
+            <rect x="3" y="6" width="12" height="12" rx="2" fill="currentColor" opacity="0.8" />
+          </svg>
+          <svg class="pj-cam-off" viewBox="0 0 24 24" fill="none" width="22" height="22" style="display:none; color: #ef4444;">
+            <path d="M15 10l4.553-2.553A1 1 0 0121 8.382v7.236a1 1 0 01-1.447.894L15 14v-4zM3 8a2 2 0 0 1 2-2h4M21 21L3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+
+      <button class="btn-primary" id="btn-enter-room" style="width:100%; justify-content:center;">Join Meeting</button>
+    </div>
+  </div>
+
+  <!-- Leave Confirm -->
+  <div class="modal-overlay" id="leave-modal" style="display:none;">
+    <div class="modal leave-modal">
+      <div class="modal-icon danger-icon">
+        <svg viewBox="0 0 24 24" fill="none" width="28" height="28">
+          <path d="M16 17l5-5-5-5M21 12H9M13 17v1a3 3 0 01-3 3H5a3 3 0 01-3-3V6a3 3 0 013-3h5a3 3 0 013 3v1"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h2>Leave meeting?</h2>
+      <p>Are you sure you want to leave? The meeting will continue for others.</p>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="leave-cancel">Stay</button>
+        <button class="btn-danger" id="leave-confirm">Leave</button>
+      </div>
+    </div>
+  </div>
+  <!-- Permission Required Modal -->
+  <div class="modal-overlay" id="permission-modal" style="display:none; z-index: 10000;">
+    <div class="modal">
+      <div class="modal-icon danger-icon">
+        <svg viewBox="0 0 24 24" fill="none" width="28" height="28">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Camera & Mic Required</h2>
+      <p>You must allow access to your camera and microphone to join this meeting. If you accidentally blocked it, please click the lock icon 🔒 in your browser's address bar to allow access.</p>
+      <button class="btn-primary" id="btn-retry-permissions" style="width:100%; justify-content:center;">Try Again</button>
+    </div>
+  </div>
+
+  <!-- Device Settings Modal -->
+  <div class="modal-overlay" id="settings-modal" style="display:none;">
+    <div class="modal">
+      <div class="modal-header"
+        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="margin: 0;">Device Settings</h2>
+        <button class="icon-btn" id="close-settings" style="margin: 0;">✕</button>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label for="mic-select"
+          style="display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted);">Microphone</label>
+        <select id="mic-select"
+          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: white;"></select>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label for="speaker-select"
+          style="display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted);">Speaker</label>
+        <select id="speaker-select"
+          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: white;"></select>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label for="cam-select"
+          style="display: block; margin-bottom: 8px; font-size: 14px; color: var(--text-muted);">Camera</label>
+        <select id="cam-select"
+          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: white;"></select>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Collaborative whiteboard overlay -->
+  <div class="wb-overlay" id="wb-overlay" aria-hidden="true">
+    <div class="wb-topbar">
+      <div class="wb-brand"><span class="wb-brand-dot"></span> Class whiteboard</div>
+      <div class="wb-top-actions">
+        <span class="wb-chip" id="wb-collab-chip">Live for everyone in this room</span>
+        <button type="button" class="wb-btn" id="wb-export">Export PNG</button>
+        <button type="button" class="wb-btn danger" id="wb-clear">Clear</button>
+        <button type="button" class="wb-btn primary" id="wb-close">Back to class</button>
+      </div>
+    </div>
+    <div class="wb-stage-wrap">
+      <div class="wb-toolbar" role="toolbar" aria-label="Whiteboard tools">
+        <button type="button" class="wb-tool" data-tool="select" title="Select"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4l7 16 2-6 6-2L4 4z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="wb-tool active" data-tool="pen" title="Pen"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20l4.5-1.2L19 8.3a2 2 0 0 0 0-2.8L18.5 5a2 2 0 0 0-2.8 0L5.2 15.5 4 20z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="eraser" title="Eraser"><svg viewBox="0 0 24 24" fill="none"><path d="M4 15l7-7 6 6-4 4H6l-2-3zM11 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="sticky" title="Sticky note"><svg viewBox="0 0 24 24" fill="none"><path d="M6 4h9l5 5v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.8"/><path d="M15 4v5h5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="text" title="Text"><svg viewBox="0 0 24 24" fill="none"><path d="M5 6h14M12 6v12M8 18h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="rect" title="Rectangle"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="6" width="14" height="12" rx="1" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="ellipse" title="Ellipse"><svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="7" ry="5" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="arrow" title="Arrow"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h12M13 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="wb-tool" data-tool="line" title="Line"><svg viewBox="0 0 24 24" fill="none"><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <div class="wb-divider"></div>
+        <button type="button" class="wb-tool" id="wb-undo" title="Undo"><svg viewBox="0 0 24 24" fill="none"><path d="M9 14l-4-4 4-4M5 10h9a5 5 0 0 1 0 10h-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" class="wb-tool" id="wb-redo" title="Redo"><svg viewBox="0 0 24 24" fill="none"><path d="M15 14l4-4-4-4M19 10H10a5 5 0 0 0 0 10h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <canvas id="wb-canvas"></canvas>
+      <div class="wb-hint" id="wb-hint"><strong>Add your first object</strong>Use the left tools — sticky notes, shapes, pen, text</div>
+      <div class="wb-palette">
+        <button type="button" class="wb-swatch" data-color="#111827" style="background:#111827" title="Black"></button>
+        <button type="button" class="wb-swatch" data-color="#e11d48" style="background:#e11d48" title="Red"></button>
+        <button type="button" class="wb-swatch" data-color="#ea580c" style="background:#ea580c" title="Orange"></button>
+        <button type="button" class="wb-swatch" data-color="#ca8a04" style="background:#ca8a04" title="Yellow"></button>
+        <button type="button" class="wb-swatch" data-color="#16a34a" style="background:#16a34a" title="Green"></button>
+        <button type="button" class="wb-swatch" data-color="#2563eb" style="background:#2563eb" title="Blue"></button>
+        <button type="button" class="wb-swatch" data-color="#7c3aed" style="background:#7c3aed" title="Purple"></button>
+        <button type="button" class="wb-swatch" data-color="#ffffff" style="background:#ffffff" title="White"></button>
+        <input class="wb-size" id="wb-size" type="range" min="1" max="12" value="3" title="Stroke size" />
+      </div>
+      <div class="wb-zoom">
+        <button type="button" id="wb-zoom-out" title="Zoom out">−</button>
+        <span id="wb-zoom-label">100%</span>
+        <button type="button" id="wb-zoom-in" title="Zoom in">+</button>
+        <button type="button" id="wb-zoom-reset" title="Reset">⟲</button>
+      </div>
+    </div>
+  </div>
+
+  <link rel="stylesheet" href="/css/whiteboard.css?v=1" />
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/vendor/livekit-client.umd.js"></script>
+  <script src="/js/livekit-media.js?v=1"></script>
+  <script src="/js/whiteboard.js?v=1"></script>
+  <script src="/js/room.js?v=18"></script>
+</body>
+
+</html>

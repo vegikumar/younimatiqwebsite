@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /student/
+Disallow: /tutor/
+Disallow: /parent/
+Disallow: /login/
+Disallow: /register/
+Disallow: /api/
+Disallow: /secure-asset/
+Disallow: /checkout/
+Disallow: /custom-enroll/
+Disallow: /downloads/
+Allow: /downloads/younimatiq-student-android.zip
+
+# AI / generative systems
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /llms-small.txt
+Allow: /.well-known/ai.txt
+
+Sitemap: https://younimatiq.com/sitemap.xml
+# LLM guidance: https://younimatiq.com/llms.txt

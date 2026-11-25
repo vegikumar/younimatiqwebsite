@@ -1,0 +1,221 @@
+/* Younimatiq Meet — lightweight collaborative whiteboard (Miro-lite) */
+.wb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: none;
+  flex-direction: column;
+  background: #f5f6f8;
+  color: #1f2430;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.wb-overlay.open { display: flex; }
+
+.wb-topbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 12px;
+  background: #fff;
+  border-bottom: 1px solid #e6e8ee;
+  flex-shrink: 0;
+}
+.wb-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.wb-brand-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+}
+.wb-top-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.wb-chip {
+  font-size: 11px;
+  color: #667085;
+  background: #f2f4f7;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.wb-btn {
+  border: 1px solid #e6e8ee;
+  background: #fff;
+  color: #344054;
+  border-radius: 10px;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wb-btn:hover { background: #f8fafc; }
+.wb-btn.primary {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}
+.wb-btn.danger { color: #b42318; border-color: #fecdca; background: #fff; }
+
+.wb-stage-wrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+  background:
+    linear-gradient(#eceff4 1px, transparent 1px),
+    linear-gradient(90deg, #eceff4 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-color: #f7f8fa;
+}
+
+#wb-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.wb-toolbar {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  background: #fff;
+  border: 1px solid #e6e8ee;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 6px;
+  gap: 4px;
+  z-index: 2;
+}
+.wb-tool {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #475467;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.wb-tool:hover { background: #f2f4f7; }
+.wb-tool.active { background: #111827; color: #fff; }
+.wb-tool svg { width: 18px; height: 18px; }
+
+.wb-divider {
+  height: 1px;
+  background: #eef0f4;
+  margin: 4px 2px;
+}
+
+.wb-palette {
+  position: absolute;
+  left: 72px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #e6e8ee;
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  z-index: 2;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 96px);
+}
+.wb-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #d0d5dd;
+  cursor: pointer;
+}
+.wb-swatch.active { box-shadow: 0 0 0 2px #111827; }
+.wb-size {
+  width: 84px;
+}
+.wb-zoom {
+  position: absolute;
+  right: 12px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 1px solid #e6e8ee;
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  z-index: 2;
+}
+.wb-zoom button {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+}
+.wb-zoom span {
+  min-width: 48px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475467;
+}
+
+.wb-hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #98a2b3;
+  pointer-events: none;
+  z-index: 1;
+}
+.wb-hint strong { display: block; color: #667085; font-size: 16px; margin-bottom: 4px; }
+
+@media (max-width: 720px) {
+  .wb-toolbar {
+    left: 50%;
+    top: auto;
+    bottom: 70px;
+    transform: translateX(-50%);
+    width: auto;
+    flex-direction: row;
+    padding: 6px;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+  .wb-palette {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+  }
+  .wb-zoom {
+    right: 12px;
+    top: 8px;
+    bottom: auto;
+  }
+}
